@@ -2,11 +2,11 @@ package main
 
 import (
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/api/handler"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/kafka"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/repository"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/usecase"
-	"fmt"
-	"log"
 	"log/slog"
 
 	"github.com/joho/godotenv"
@@ -15,18 +15,18 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("loading envs", err)
 	}
 
 	c, err := config.Read()
 	if err != nil {
-		log.Println("failed to read config:", err.Error())
+		slog.Error("reading config:", err)
 		return
 	}
 
 	dbPool, err := repository.Connect(c)
 	if err != nil {
-		fmt.Println(err.Error())
+		slog.Error("database connect", err)
 	}
 
 	defer func() {
@@ -34,8 +34,16 @@ func main() {
 			dbPool.Close()
 		}
 	}()
+
+	producer, err := kafka.New(c)
+
 	repo := repository.NewStorageMessage(dbPool)
-	service := usecase.NewMessageService(&repo)
+	redis, err := cache.Connect(c)
+	if err != nil {
+		slog.Error("redis connect", err)
+	}
+	cacheService := cache.NewCache(redis, &repo)
+	service := usecase.NewMessageService(producer, cacheService)
 	handlers := handler.NewMessageHandler(service)
 	router := handlers.RegisterHandlers()
 	slog.Info("starting listening port: ")

@@ -1,7 +1,7 @@
 version: '3.1'
 services:
   postgres:
-    container_name: hw_1_db
+    container_name: pg_db
     image: postgres:latest
     ports:
       - 5432:5432
@@ -12,6 +12,9 @@ services:
       - /var/lib/postgresql/data:/var/lib/postgresql/data
       - ./internal/repository/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./scripts/user_data.csv:/data/user_data.csv
+    networks:
+      - internal
+
   zoo1:
     image: confluentinc/cp-zookeeper:7.3.2
     hostname: zoo1
@@ -22,6 +25,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_SERVERS: zoo1:2888:3888
+    networks:
+      - internal
 
   kafka1:
     image: confluentinc/cp-kafka:7.3.2
@@ -47,8 +52,17 @@ services:
       KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
     depends_on:
       - zoo1
+    networks:
+      - internal
+
   redis:
     image: redis
     ports:
       - 6379:6379
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - internal
+
+
+networks:
+  internal:

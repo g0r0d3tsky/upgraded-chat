@@ -22,14 +22,17 @@ var (
 	clients = make(map[*websocket.Conn]struct{})
 )
 
+// TODO: куда выносить имя топика?
+const topic = "general-chat"
+
 type mes struct {
 	UserNickname string
 	Content      string
 }
 
 type MessageService interface {
-	GetAmountMessage(ctx context.Context, amount int) ([]*domain.Message, error)
-	CreateMessage(ctx context.Context, mes *domain.Message) error
+	Push(topic string, message *domain.Message) error
+	GetMessages(ctx context.Context, amount int) ([]*domain.Message, error)
 }
 
 type MessageHandler struct {
@@ -37,7 +40,9 @@ type MessageHandler struct {
 }
 
 func NewMessageHandler(service MessageService) *MessageHandler {
-	return &MessageHandler{service: service}
+	return &MessageHandler{
+		service: service,
+	}
 }
 
 func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
@@ -63,21 +68,20 @@ func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
 		var message mes
 		err = json.Unmarshal(messageBytes, &message)
 		if err != nil {
-			log.Println("Error decoding message:", err)
+			slog.Error("error decoding message:", err)
 			continue
 		}
-		//TODO: fix
-		message_ := &domain.Message{
-			UserNickname: message.UserNickname,
-			Content:      message.Content,
-		}
-		err = h.service.CreateMessage(context.TODO(), message_)
+
+		var mess domain.Message
+		mess.UserNickname = message.UserNickname
+		mess.Content = message.Content
+
+		err = h.service.Push(topic, &mess)
 		if err != nil {
-			log.Println("Error saving message:", err)
+			slog.Error("saving message:", err)
 			return
 		}
 
-		// Теперь мы рассылаем сообщения всем клиентам
 		go writeMessage(message)
 
 		go messageHandler(message)
@@ -104,21 +108,23 @@ func messageHandler(message mes) {
 }
 
 func (h *MessageHandler) sendLastMessages(ctx context.Context, connection *websocket.Conn) {
-	messages, err := h.service.GetAmountMessage(ctx, 10)
+
+	//TODO: здесь константу 10 тоже хотелось бы куда-то вынести?
+	messages, err := h.service.GetMessages(ctx, 10)
 	if err != nil {
-		log.Fatal("getting messages: ", err)
+		slog.Error("getting messages: ", err)
 		return
 	}
 	for _, msg := range messages {
 		messageBytes, err := json.Marshal(msg)
 		if err != nil {
-			log.Println("Error encoding message:", err)
+			slog.Error("encoding message:", err)
 			continue
 		}
 
 		err = connection.WriteMessage(websocket.TextMessage, messageBytes)
 		if err != nil {
-			log.Println("Error sending message:", err)
+			slog.Error("sending message:", err)
 			continue
 		}
 	}
