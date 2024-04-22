@@ -108,7 +108,6 @@ func messageHandler(message mes) {
 }
 
 func (h *MessageHandler) sendLastMessages(ctx context.Context, connection *websocket.Conn) {
-
 	//TODO: здесь константу 10 тоже хотелось бы куда-то вынести?
 	messages, err := h.service.GetMessages(ctx, 10)
 	if err != nil {

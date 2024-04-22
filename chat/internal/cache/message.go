@@ -94,8 +94,7 @@ func (c Cache) GetMessages(ctx context.Context, amount int) ([]*domain.Message, 
 }
 
 func (c Cache) SetMessages(ctx context.Context, messages []*domain.Message) error {
-	var mess []*Message
-	mess = ToRedisList(messages)
+	mess := ToRedisList(messages)
 	for _, val := range mess {
 		data, err := json.Marshal(val)
 		if err != nil {
