@@ -34,10 +34,11 @@ type MessageHandler struct {
 	kafkaTopic         string
 }
 
-func NewMessageHandler(service MessageService, amountlastMessages int) *MessageHandler {
+func NewMessageHandler(service MessageService, amountlastMessages int, kafkaTopic string) *MessageHandler {
 	return &MessageHandler{
 		service:            service,
 		amountLastMessages: amountlastMessages,
+		kafkaTopic:         kafkaTopic,
 	}
 }
 
