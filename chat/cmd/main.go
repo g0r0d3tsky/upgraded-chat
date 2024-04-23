@@ -43,8 +43,8 @@ func main() {
 		slog.Error("redis connect", err)
 	}
 	cacheService := cache.NewCache(redis, &repo)
-	service := usecase.NewMessageService(producer, cacheService)
-	handlers := handler.NewMessageHandler(service)
+	service := usecase.NewMessageService(producer, cacheService, c.KafkaTopic)
+	handlers := handler.NewMessageHandler(service, c.AmountLastMessages)
 	router := handlers.RegisterHandlers()
 	slog.Info("starting listening port: ")
 	err = handler.Serve(c, router)

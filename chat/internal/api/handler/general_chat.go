@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/api/handler/models"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
 	"context"
 	"encoding/json"
@@ -22,26 +23,21 @@ var (
 	clients = make(map[*websocket.Conn]struct{})
 )
 
-// TODO: куда выносить имя топика?
-const topic = "general-chat"
-
-type mes struct {
-	UserNickname string
-	Content      string
-}
-
 type MessageService interface {
 	Push(topic string, message *domain.Message) error
 	GetMessages(ctx context.Context, amount int) ([]*domain.Message, error)
 }
 
 type MessageHandler struct {
-	service MessageService
+	service            MessageService
+	amountLastMessages int
+	kafkaTopic         string
 }
 
-func NewMessageHandler(service MessageService) *MessageHandler {
+func NewMessageHandler(service MessageService, amountlastMessages int) *MessageHandler {
 	return &MessageHandler{
-		service: service,
+		service:            service,
+		amountLastMessages: amountlastMessages,
 	}
 }
 
@@ -65,7 +61,7 @@ func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		var message mes
+		var message models.Message
 		err = json.Unmarshal(messageBytes, &message)
 		if err != nil {
 			slog.Error("error decoding message:", err)
@@ -76,7 +72,7 @@ func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
 		mess.UserNickname = message.UserNickname
 		mess.Content = message.Content
 
-		err = h.service.Push(topic, &mess)
+		err = h.service.Push(h.kafkaTopic, &mess)
 		if err != nil {
 			slog.Error("saving message:", err)
 			return
@@ -88,7 +84,7 @@ func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func writeMessage(message mes) {
+func writeMessage(message models.Message) {
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
 		log.Println("Error encoding message:", err)
@@ -103,13 +99,12 @@ func writeMessage(message mes) {
 	}
 }
 
-func messageHandler(message mes) {
+func messageHandler(message models.Message) {
 	fmt.Printf("%v : %v \n", message.UserNickname, message.Content)
 }
 
 func (h *MessageHandler) sendLastMessages(ctx context.Context, connection *websocket.Conn) {
-	//TODO: здесь константу 10 тоже хотелось бы куда-то вынести?
-	messages, err := h.service.GetMessages(ctx, 10)
+	messages, err := h.service.GetMessages(ctx, h.amountLastMessages)
 	if err != nil {
 		slog.Error("getting messages: ", err)
 		return

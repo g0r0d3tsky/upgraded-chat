@@ -24,8 +24,10 @@ type Config struct {
 		Database string `env:"REDIS_DB,notEmpty"`
 	}
 
-	Host string `env:"HOST"`
-	Port string `env:"PORT"`
+	Host               string `env:"HOST"`
+	Port               string `env:"PORT"`
+	AmountLastMessages int    `env:"AMOUNT_LAST_MESSAGES"`
+	KafkaTopic         string `env:"KAFKA_TOPIC"`
 }
 
 func (c *Config) ServerAddress() string {
