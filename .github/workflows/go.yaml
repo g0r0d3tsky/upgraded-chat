@@ -45,18 +45,21 @@ jobs:
         with:
           version: latest
           working-directory: ./client
+          config: .golangci.yaml
 
       - name: LintChat
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
           working-directory: ./chat
+          config: .golangci.yaml
 
       - name: LintStorageService
         uses: golangci/golangci-lint-action@v3
         with:
             version: latest
             working-directory: ./client
+            config: .golangci.yaml
 
       - name: Test
         working-directory: ./chat
