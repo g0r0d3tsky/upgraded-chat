@@ -18,13 +18,11 @@ type Consumer struct {
 	handler MessageHandler
 }
 
-func (c *Consumer) Setup(session sarama.ConsumerGroupSession) error {
-	//
+func (c *Consumer) Setup(_ sarama.ConsumerGroupSession) error {
 	return nil
 }
 
-func (c *Consumer) Cleanup(session sarama.ConsumerGroupSession) error {
-	//
+func (c *Consumer) Cleanup(_ sarama.ConsumerGroupSession) error {
 	return nil
 }
 

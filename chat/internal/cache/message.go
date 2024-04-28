@@ -9,12 +9,19 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+//go:generate mockgen -source=message.go -destination=mocks/repositoryMock.go
 type Repository interface {
 	GetAmountMessage(ctx context.Context, amount int) ([]*domain.Message, error)
 }
 
+type Redis interface {
+	LLen(ctx context.Context, key string) *redis.IntCmd
+	LRange(ctx context.Context, key string, start, stop int64) *redis.StringSliceCmd
+	RPush(ctx context.Context, key string, values ...interface{}) *redis.IntCmd
+}
+
 type Cache struct {
-	redis *redis.Client
+	redis Redis
 	repo  Repository
 }
 
@@ -47,7 +54,7 @@ func ToDomainList(p []*Message) []*domain.Message {
 	return r
 }
 
-func NewCache(client *redis.Client, repo Repository) Cache {
+func NewCache(client Redis, repo Repository) Cache {
 	cache := Cache{
 		redis: client,
 		repo:  repo,
@@ -105,5 +112,6 @@ func (c Cache) SetMessages(ctx context.Context, messages []*domain.Message) erro
 			return fmt.Errorf("pushing redis: %w", err)
 		}
 	}
+
 	return nil
 }

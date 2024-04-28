@@ -6,7 +6,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 
@@ -23,8 +22,9 @@ var (
 	clients = make(map[*websocket.Conn]struct{})
 )
 
+//go:generate mockgen -source=general_chat.go -destination=mocks/messageServiceMock.go
 type MessageService interface {
-	Push(topic string, message *domain.Message) error
+	Push(ctx context.Context, topic string, message *domain.Message) error
 	GetMessages(ctx context.Context, amount int) ([]*domain.Message, error)
 }
 
@@ -50,7 +50,7 @@ func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
 			slog.Error("connection closing", err)
 		}
 	}(connection)
-	h.sendLastMessages(context.TODO(), connection)
+	h.sendLastMessages(r.Context(), connection)
 
 	clients[connection] = struct{}{}
 	defer delete(clients, connection)
@@ -73,7 +73,7 @@ func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
 		mess.UserNickname = message.UserNickname
 		mess.Content = message.Content
 
-		err = h.service.Push(h.kafkaTopic, &mess)
+		err = h.service.Push(r.Context(), h.kafkaTopic, &mess)
 		if err != nil {
 			slog.Error("saving message:", err)
 			return
@@ -88,13 +88,14 @@ func (h *MessageHandler) echo(w http.ResponseWriter, r *http.Request) {
 func writeMessage(message models.Message) {
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
-		log.Println("Error encoding message:", err)
+		slog.Error("encoding message:", err)
 		return
 	}
 
 	for conn := range clients {
 		err := conn.WriteMessage(websocket.TextMessage, messageBytes)
 		if err != nil {
+			slog.Error("sending message:", err)
 			return
 		}
 	}

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+//go:generate mockgen -source=message.go -destination=mocks/BrokerCacheMock.go
 type Broker interface {
 	Push(topic string, message *domain.Message) error
 }
@@ -30,7 +31,7 @@ func NewMessageService(producer *kafka.Producer, cache cache.Cache) *MessageServ
 	}
 }
 
-func (s *MessageService) Push(topic string, mess *domain.Message) error {
+func (s *MessageService) Push(ctx context.Context, topic string, mess *domain.Message) error {
 	t := time.Now()
 	mess.Time = t
 	err := s.broker.Push(topic, mess)
@@ -39,8 +40,7 @@ func (s *MessageService) Push(topic string, mess *domain.Message) error {
 	}
 	var messages []*domain.Message
 	messages = append(messages, mess)
-	//TODO: что с контекстом делать?
-	err = s.cache.SetMessages(context.Background(), messages)
+	err = s.cache.SetMessages(ctx, messages)
 	if err != nil {
 		return fmt.Errorf("setting message: %w", err)
 	}
@@ -49,4 +49,8 @@ func (s *MessageService) Push(topic string, mess *domain.Message) error {
 
 func (s *MessageService) GetMessages(ctx context.Context, amount int) ([]*domain.Message, error) {
 	return s.cache.GetMessages(ctx, amount)
+}
+
+func (s *MessageService) SetMessages(ctx context.Context, messages []*domain.Message) error {
+	return s.cache.SetMessages(ctx, messages)
 }

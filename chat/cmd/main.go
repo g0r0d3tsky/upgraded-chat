@@ -36,9 +36,32 @@ func main() {
 	}()
 
 	producer, err := kafka.New(c)
+	if err != nil {
+		slog.Error("kafka connect", err)
+		return
+	}
+
+	defer func() {
+		if producer != nil {
+			err := producer.Close()
+			if err != nil {
+				slog.Error("closing producer", err)
+				return
+			}
+		}
+	}()
 
 	repo := repository.NewStorageMessage(dbPool)
 	redis, err := cache.Connect(c)
+	defer func() {
+		if redis != nil {
+			err := redis.Close()
+			if err != nil {
+				slog.Error("closing redis", err)
+				return
+			}
+		}
+	}()
 	if err != nil {
 		slog.Error("redis connect", err)
 	}

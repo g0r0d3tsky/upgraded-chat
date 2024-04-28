@@ -66,7 +66,6 @@ func main() {
 			slog.Info("terminate: signal")
 			keepRunning = false
 		}
-
 	}
 
 	cancel()
@@ -77,5 +76,4 @@ func main() {
 		slog.Error("closing consumer", err)
 		return
 	}
-
 }
