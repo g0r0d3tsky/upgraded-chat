@@ -1,12 +1,13 @@
 package usecase
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/kafka"
 	"context"
 	"fmt"
 	"time"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/kafka"
 )
 
 //go:generate mockgen -source=message.go -destination=mocks/BrokerCacheMock.go

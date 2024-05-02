@@ -1,13 +1,14 @@
 package handler
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/api/handler/models"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/http"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/api/handler/models"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -15,7 +16,7 @@ import (
 
 var (
 	upgrader = websocket.Upgrader{
-		CheckOrigin: func(r *http.Request) bool {
+		CheckOrigin: func(_ *http.Request) bool {
 			return true
 		},
 	}

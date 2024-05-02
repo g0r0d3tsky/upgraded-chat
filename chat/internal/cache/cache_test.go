@@ -1,21 +1,22 @@
 package cache
 
 import (
-	mock_cache "2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache/mocks"
-	mock_repo "2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache/mocks"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
 	"context"
 	"errors"
 	"reflect"
 	"testing"
 	"time"
 
+	mock_cache "2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache/mocks"
+	mock_repo "2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache/mocks"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
+
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/mock/gomock"
 )
 
-func TestGetMessages_Positive(t *testing.T) {
+func TestGetMessages(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 

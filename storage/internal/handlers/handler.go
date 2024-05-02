@@ -1,12 +1,13 @@
 package handlers
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/domain"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/kafka"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/domain"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/kafka"
 
 	"github.com/IBM/sarama"
 )

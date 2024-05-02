@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
 	"context"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

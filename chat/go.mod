@@ -1,6 +1,6 @@
 module 2024-spring-ab-go-hw-3-g0r0d3tsky/chat
 
-go 1.22.0
+go 1.22
 
 require (
 	github.com/IBM/sarama v1.43.1

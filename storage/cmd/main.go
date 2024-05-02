@@ -1,17 +1,18 @@
 package main
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/config"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/handlers"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/kafka"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/repository"
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/usecase"
 	"context"
 	"log/slog"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/config"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/handlers"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/kafka"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/repository"
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/usecase"
 
 	"github.com/joho/godotenv"
 )

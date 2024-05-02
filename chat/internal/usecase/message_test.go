@@ -1,11 +1,12 @@
 package usecase
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
-	mock_cache "2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/usecase/mocks"
 	"context"
 	"errors"
 	"testing"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/domain"
+	mock_cache "2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/usecase/mocks"
 
 	"github.com/google/uuid"
 	"go.uber.org/mock/gomock"

@@ -1,10 +1,11 @@
 package repository
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
 	"context"
 	"fmt"
 	"time"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

@@ -1,11 +1,12 @@
 package cache
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
 	"context"
 	"fmt"
 	"log/slog"
 	"time"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
 
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"

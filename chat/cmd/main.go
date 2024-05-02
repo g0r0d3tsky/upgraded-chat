@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log/slog"
+
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/api/handler"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/cache"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/kafka"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/repository"
 	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/usecase"
-	"log/slog"
 
 	"github.com/joho/godotenv"
 )
@@ -69,7 +70,9 @@ func main() {
 	service := usecase.NewMessageService(producer, cacheService)
 	handlers := handler.NewMessageHandler(service, c.AmountLastMessages, c.KafkaTopic)
 	router := handlers.RegisterHandlers()
-	slog.Info("starting listening port: ")
+
+	slog.Info("starting listening port")
+
 	err = handler.Serve(c, router)
 
 	if err != nil {

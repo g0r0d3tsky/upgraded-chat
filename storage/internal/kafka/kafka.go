@@ -1,13 +1,14 @@
 package kafka
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/config"
 	"context"
 	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
 	"sync"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/storage/internal/config"
 
 	"github.com/IBM/sarama"
 )

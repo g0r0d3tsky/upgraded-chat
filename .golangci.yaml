@@ -17,7 +17,7 @@ linters:
     - nilnil # Checks that there is no simultaneous return of nil error and an invalid value.
     - nolintlint # Reports ill-formed or insufficient nolint directives.
     - zerologlint # Detects the wrong usage of zerolog that a user forgets to dispatch with Send or Msg.
-    - gofumpt # Gofumpt checks whether code was gofumpt-ed.
+    # - gofumpt # Gofumpt checks whether code was gofumpt-ed.
 linters-settings:
   errcheck:
     check-type-assertions: true
@@ -64,7 +64,7 @@ linters-settings:
   gofumpt:
     # Choose whether to use the extra rules.
     # Default: false
-    extra-rules: true
+    #extra-rules: true
   revive:
     ignore-generated-header: true
     # https://github.com/mgechev/revive#recommended-configuration

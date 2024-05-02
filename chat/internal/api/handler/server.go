@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
 	"context"
 	"errors"
 	"log/slog"
@@ -10,6 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"2024-spring-ab-go-hw-3-g0r0d3tsky/chat/internal/config"
 )
 
 func Serve(c *config.Config, router http.Handler) error {
